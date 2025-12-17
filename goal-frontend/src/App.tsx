@@ -13,10 +13,13 @@ function App() {
 
   const loadGoals = async () => {
     const data = await fetchGoals();
+    console.log(data, 'vvvvvvvvvvv');
+
     setGoals(data);
   };
 
   useEffect(() => {
+    console.log('vvvvvvvvvvv');
     loadGoals();
   }, []);
 
