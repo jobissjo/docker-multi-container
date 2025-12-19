@@ -5,6 +5,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 import os
 
+MONGO_USERNAME = os.getenv("MONGO_USERNAME")
+MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
+
 from models import Goal
 
 # Configure logging
@@ -37,7 +40,7 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def start_db():
-    client = AsyncIOMotorClient("mongodb://superadmin:secret@mongodb:27017?authSource=admin")
+    client = AsyncIOMotorClient(f"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@mongodb:27017?authSource=admin")
     logger.info("i am connected")
     await init_beanie(
         database=client.goal_db,
@@ -50,9 +53,6 @@ async def start_db():
 @app.post("/goals", response_model=Goal)
 async def create_goal(goal: Goal):
     logger.info(f"Creating goal: {goal.title}")
-    print('cccccccccccc')
-    print('cccccVVVVccccccc')
-    print('cccccVVVVccccccc')
     await goal.insert()
     return goal
 
@@ -60,10 +60,6 @@ async def create_goal(goal: Goal):
 @app.get("/goals", response_model=list[Goal])
 async def list_goals():
     logger.info("Listing all goals")
-    print('cccccccccccc')
-    print('cccccVVVVccccccc')
-    print('cccccVVVVccccccc')
-
     return await Goal.find_all().to_list()
 
 
